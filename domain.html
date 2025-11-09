@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure Form Validation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+    }
+    input {
+      margin: 8px 0;
+      padding: 6px;
+      width: 250px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 8px 14px;
+    }
+    p {
+      font-weight: bold;
+    }
+    .valid { color: green; }
+    .invalid { color: red; }
+  </style>
+</head>
+<body>
+  <h2>🛡️ Secure Registration Form</h2>
+
+  <form onsubmit="return validateForm()">
+    <label>Email:</label><br>
+    <input type="text" id="email" placeholder="Enter email"><br>
+
+    <label>Password:</label><br>
+    <input type="password" id="password" placeholder="Enter password"><br>
+
+    <label>Confirm Password:</label><br>
+    <input type="password" id="confirmPassword" placeholder="Confirm password"><br>
+
+    <button type="submit">Register</button>
+  </form>
+
+  <p id="result"></p>
+
+  <script>
+    function validateForm() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+      const result = document.getElementById("result");
+
+      // ✅ Email validation (simple regex pattern)
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!emailPattern.test(email)) {
+        result.innerHTML = "❌ Invalid email format.";
+        result.className = "invalid";
+        return false;
+      }
+
+      // ✅ Password strength validation
+      const passPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      if (!passPattern.test(password)) {
+        result.innerHTML = "❌ Weak password. Use 8+ chars, upper, lower, number & special symbol.";
+        result.className = "invalid";
+        return false;
+      }
+
+      // ✅ Confirm password check
+      if (password !== confirmPassword) {
+        result.innerHTML = "❌ Passwords do not match.";
+        result.className = "invalid";
+        return false;
+      }
+
+      // ✅ All checks passed
+      result.innerHTML = "✅ Registration successful! (All inputs valid)";
+      result.className = "valid";
+      return false; // prevent actual form submission for demo
+    }
+  </script>
+</body>
+</html>
