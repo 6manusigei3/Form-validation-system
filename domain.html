@@ -3,20 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Secure Form Validation</title>
+  <title>Secure Registration & Login</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 30px;
+      margin: 40px;
+      background: #f9f9f9;
+    }
+    h2 {
+      color: #333;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      margin-bottom: 30px;
     }
     input {
       margin: 8px 0;
       padding: 6px;
-      width: 250px;
+      width: 95%;
     }
     button {
       margin-top: 10px;
       padding: 8px 14px;
+      cursor: pointer;
     }
     p {
       font-weight: bold;
@@ -26,14 +39,14 @@
   </style>
 </head>
 <body>
-  <h2>🛡️ Secure Registration Form</h2>
 
-  <form onsubmit="return validateForm()">
+  <h2>🛡️ Secure Registration Form</h2>
+  <form id="registerForm" onsubmit="return registerUser()">
     <label>Email:</label><br>
-    <input type="text" id="email" placeholder="Enter email"><br>
+    <input type="text" id="regEmail" placeholder="Enter email"><br>
 
     <label>Password:</label><br>
-    <input type="password" id="password" placeholder="Enter password"><br>
+    <input type="password" id="regPassword" placeholder="Enter password"><br>
 
     <label>Confirm Password:</label><br>
     <input type="password" id="confirmPassword" placeholder="Confirm password"><br>
@@ -41,17 +54,35 @@
     <button type="submit">Register</button>
   </form>
 
+  <h2>🔐 Login</h2>
+  <form id="loginForm" onsubmit="return loginUser()">
+    <label>Email:</label><br>
+    <input type="text" id="loginEmail" placeholder="Enter email"><br>
+
+    <label>Password:</label><br>
+    <input type="password" id="loginPassword" placeholder="Enter password"><br>
+
+    <button type="submit">Login</button>
+  </form>
+
   <p id="result"></p>
 
   <script>
-    function validateForm() {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
+    // Simple hash simulation (NOT real encryption)
+    function hashPassword(password) {
+      // Convert password to base64 (demo only)
+      return btoa(password);
+    }
+
+    // Registration function
+    function registerUser() {
+      const email = document.getElementById("regEmail").value.trim();
+      const password = document.getElementById("regPassword").value;
       const confirmPassword = document.getElementById("confirmPassword").value;
       const result = document.getElementById("result");
 
-      // ✅ Email validation (simple regex pattern)
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const passPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
       if (!emailPattern.test(email)) {
         result.innerHTML = "❌ Invalid email format.";
@@ -59,25 +90,60 @@
         return false;
       }
 
-      // ✅ Password strength validation
-      const passPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
       if (!passPattern.test(password)) {
-        result.innerHTML = "❌ Weak password. Use 8+ chars, upper, lower, number & special symbol.";
+        result.innerHTML = "❌ Weak password. Use 8+ chars, upper, lower, number & special.";
         result.className = "invalid";
         return false;
       }
 
-      // ✅ Confirm password check
       if (password !== confirmPassword) {
         result.innerHTML = "❌ Passwords do not match.";
         result.className = "invalid";
         return false;
       }
 
-      // ✅ All checks passed
-      result.innerHTML = "✅ Registration successful! (All inputs valid)";
+      const hashedPassword = hashPassword(password);
+      localStorage.setItem(email, hashedPassword);
+
+      result.innerHTML = "✅ Registration successful! You can now log in.";
       result.className = "valid";
-      return false; // prevent actual form submission for demo
+
+      // Clear inputs
+      document.getElementById("registerForm").reset();
+      return false;
+    }
+
+    // Login function
+    function loginUser() {
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value;
+      const result = document.getElementById("result");
+
+      if (email === "" || password === "") {
+        result.innerHTML = "⚠️ Please fill in all fields.";
+        result.className = "invalid";
+        return false;
+      }
+
+      const storedHash = localStorage.getItem(email);
+      if (!storedHash) {
+        result.innerHTML = "❌ No account found for that email.";
+        result.className = "invalid";
+        return false;
+      }
+
+      const enteredHash = hashPassword(password);
+
+      if (enteredHash === storedHash) {
+        result.innerHTML = "✅ Login successful! Welcome back.";
+        result.className = "valid";
+      } else {
+        result.innerHTML = "❌ Incorrect password.";
+        result.className = "invalid";
+      }
+
+      document.getElementById("loginForm").reset();
+      return false;
     }
   </script>
 </body>
