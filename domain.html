@@ -10,9 +10,6 @@
       margin: 40px;
       background: #f9f9f9;
     }
-    h2 {
-      color: #333;
-    }
     form {
       background: white;
       padding: 20px;
@@ -44,13 +41,10 @@
   <form id="registerForm" onsubmit="return registerUser()">
     <label>Email:</label><br>
     <input type="text" id="regEmail" placeholder="Enter email"><br>
-
     <label>Password:</label><br>
     <input type="password" id="regPassword" placeholder="Enter password"><br>
-
     <label>Confirm Password:</label><br>
     <input type="password" id="confirmPassword" placeholder="Confirm password"><br>
-
     <button type="submit">Register</button>
   </form>
 
@@ -58,23 +52,19 @@
   <form id="loginForm" onsubmit="return loginUser()">
     <label>Email:</label><br>
     <input type="text" id="loginEmail" placeholder="Enter email"><br>
-
     <label>Password:</label><br>
     <input type="password" id="loginPassword" placeholder="Enter password"><br>
-
     <button type="submit">Login</button>
   </form>
 
   <p id="result"></p>
 
   <script>
-    // Simple hash simulation (NOT real encryption)
+    // Encode password (demo only)
     function hashPassword(password) {
-      // Convert password to base64 (demo only)
       return btoa(password);
     }
 
-    // Registration function
     function registerUser() {
       const email = document.getElementById("regEmail").value.trim();
       const password = document.getElementById("regPassword").value;
@@ -107,13 +97,10 @@
 
       result.innerHTML = "✅ Registration successful! You can now log in.";
       result.className = "valid";
-
-      // Clear inputs
       document.getElementById("registerForm").reset();
       return false;
     }
 
-    // Login function
     function loginUser() {
       const email = document.getElementById("loginEmail").value.trim();
       const password = document.getElementById("loginPassword").value;
